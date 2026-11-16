@@ -2,11 +2,6 @@ import numpy as np
 import sounddevice as sd 
 import matplotlib.pyplot as plt
 
-def fase_fi(bit): 
-    if bit == '0': 
-        return 0
-    return np.pi
-
 def calculo_FFT(dados, freqAmostra):
     qtd_amostras = len(dados)
     yf = np.abs(np.fft.rfft(dados)) / qtd_amostras
@@ -14,11 +9,18 @@ def calculo_FFT(dados, freqAmostra):
     return xf, yf
 
 def main():
-    frase = input("Digite uma frase: ")
-    string_mensagem = [string_mensagem + format(ord(caractere), '08b') for caractere in frase] 
-    tempo = np.linspace(0, len(string_mensagem)/100, len(string_mensagem))
-    modulado = np.sin(2*np.pi*4000*tempo + fase_fi(string_mensagem))
     fs = 44100
+    n_amostras = fs // 100
+    frase = input("Digite uma frase: ")
+    string_mensagem = ""
+    for caractere in frase: 
+        string_mensagem += format(ord(caractere), '08b') 
+    tempo = np.linspace(0, len(string_mensagem)/100, len(string_mensagem)*n_amostras)
+    fases = np.zeros(len(string_mensagem)*n_amostras)
+    for i in range(len(string_mensagem)*n_amostras): 
+        if string_mensagem[i] == '1': 
+            fases[i*n_amostras : (i+1)*n_amostras] = np.pi
+    modulado = np.sin(2*np.pi*4000*tempo + fases)
     print("Sinal começou a tocar")
     sd.play(modulado, fs)
     sd.wait()
@@ -29,3 +31,6 @@ def main():
     plt.xlabel("Frequências (Hz)")
     plt.ylabel("Magnitude")
     plt.show()        
+
+if __name__ == '__main__': 
+    main()
