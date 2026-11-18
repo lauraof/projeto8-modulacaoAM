@@ -15,9 +15,9 @@ def main():
     string_mensagem = ""
     for caractere in frase: 
         string_mensagem += format(ord(caractere), '08b') 
-    tempo = np.linspace(0, len(string_mensagem)/100, len(string_mensagem)*n_amostras)
+    tempo = np.linspace(0, len(string_mensagem)/100, len(string_mensagem)*n_amostras, endpoint=False)
     fases = np.zeros(len(string_mensagem)*n_amostras)
-    for i in range(len(string_mensagem)*n_amostras): 
+    for i in range(len(string_mensagem)): 
         if string_mensagem[i] == '1': 
             fases[i*n_amostras : (i+1)*n_amostras] = np.pi
     modulado = np.sin(2*np.pi*4000*tempo + fases)
